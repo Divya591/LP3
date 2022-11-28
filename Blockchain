@@ -1,0 +1,153 @@
+// Solidity program to implement
+// the above approach
+pragma solidity >= 0.7.0<0.8.0;
+
+// Build the Contract
+contract MarksManagmtSys
+{
+	// Create a structure for
+	// student details
+	struct Student
+	{
+		int ID;
+		string fName;
+		string lName;
+		int marks;
+	}
+
+	address owner;
+	int public stdCount = 0;
+	mapping(int => Student) public stdRecords;
+
+	modifier onlyOwner
+	{
+		require(owner == msg.sender);
+		_;
+	}
+	constructor()
+	{
+		owner=msg.sender;
+	}
+
+	// Create a function to add
+	// the new records
+	function addNewRecords(int _ID,
+						string memory _fName,
+						string memory _lName,
+						int _marks) public onlyOwner
+	{
+		// Increase the count by 1
+		stdCount = stdCount + 1;
+
+		// Fetch the student details
+		// with the help of stdCount
+		stdRecords[stdCount] = Student(_ID, _fName,
+									_lName, _marks);
+	}
+
+	// Create a function to add bonus marks
+	function bonusMarks(int _bonus) public onlyOwner
+	{
+		stdRecords[stdCount].marks =
+					stdRecords[stdCount].marks + _bonus;
+	}
+}
+
+
+
+
+
+
+
+
+
+pragma solidity ^0.4.0;
+
+// Creating a contract
+contract fback
+{
+// Declaring the state variable
+uint x;
+
+// Mapping of addresses to their balances
+mapping(address =&gt; uint) balance;
+
+// Creating a constructor
+constructor() public
+{
+// Set x to default
+// value of 10
+x=10;
+
+}
+
+// Creating a function
+function SetX(uint _x) public returns(bool)
+{
+// Set x to the
+// value sent
+x=_x;
+
+return true;
+}
+
+// This fallback function
+// will keep all the Ether
+function() public payable
+{
+balance[msg.sender] += msg.value;
+}
+}
+
+// Creating the sender contract
+contract Sender
+{
+function transfer() public payable
+{
+// Address of Fback contract
+address _receiver =
+
+0xbcD310867F1b74142c2f5776404b6bd97165FA56;
+
+// Transfers 100 Eth to above contract
+_receiver.transfer(100);
+}
+}
+
+
+
+
+
+
+
+
+
+
+
+pragma solidity ^0.5.0; contract Crud {
+struct User {
+uint id; string name;
+}
+User[] public users; uint public nextId = 0;
+function Create(string memory name) public { users.push(User(nextId, name)); nextId++;
+}
+function Read(uint id) view public returns(uint, string memory) { for(uint i=0; i<users.length; i++) {
+if(users[i].id == id) { return(users[i].id, users[i].name);
+}
+}
+              }
+function Update(uint id, string memory name) public { for(uint i=0; i<users.length; i++) {
+if(users[i].id == id) { users[i].name =name;
+}
+}
+}
+function Delete(uint id) public { delete users[id];
+}
+function find(uint id) view internal returns(uint) { for(uint i=0; i< users.length; i++) {
+if(users[i].id == id) { return i;
+}
+}
+// if user does not exist then revert back revert("User does not exist");
+}
+}
+
