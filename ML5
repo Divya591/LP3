@@ -1,39 +1,54 @@
-import numpy as np
 import pandas as pd
-from sklearn.svm import SVC
-from sklearn.neighbors import KNeighborsClassifier
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+%matplotlib inline
+import warnings
+warnings.filterwarnings('ignore')
 from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
 from sklearn import metrics
-from sklearn.metrics import mean_squared_error,mean_absolute_error
-from sklearn.metrics import accuracy_score
 
-df = pd.read_csv('emails.csv')
-df
-df.info()
-df.describe()
+df=pd.read_csv('emails.csv')
+
+df.head()
+
+df.columns
+
 df.isnull().sum()
 
-x = df.iloc[:,1:3001]
-y = df.iloc[:,-1].values
+df.dropna(inplace = True)
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state = 1)
+df.drop(['Email No.'],axis=1,inplace=True)
+X = df.drop(['Prediction'],axis = 1)
+y = df['Prediction']
 
-knn = KNeighborsClassifier(n_neighbors=8)
-knn.fit(x_train, y_train)
-y_pred = knn.predict(x_test)
+from sklearn.preprocessing import scale
+X = scale(X)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state = 42)
 
-print("MSE:", mean_squared_error(y_test, y_pred))
-print("MAE:", mean_absolute_error(y_test, y_pred))
-print("RMSE:", np.sqrt(mean_squared_error(y_test, y_pred)))
-print("R2 Score:",metrics.r2_score(y_test, y_pred))
-print("Accuracy Score for KNN:", accuracy_score(y_test, y_pred))
 
-svc = SVC(C=1.0, kernel='rbf', gamma='auto') 
-svc.fit(x_train, y_train)
-y_pred = svc.predict(x_test)
+from sklearn.neighbors import KNeighborsClassifier
+knn = KNeighborsClassifier(n_neighbors=7)
+ 
+knn.fit(X_train, y_train)
+y_pred = knn.predict(X_test)
 
-print("MSE:", mean_squared_error(y_test, y_pred))
-print("MAE:", mean_absolute_error(y_test, y_pred))
-print("RMSE:", np.sqrt(mean_squared_error(y_test, y_pred)))
-print("R2 Score:",metrics.r2_score(y_test, y_pred))
-print("Accuracy Score for SVC:", accuracy_score(y_test, y_pred))
+
+print("Prediction",y_pred)
+Prediction [0 0 1 ... 1 1 1]
+
+print("KNN accuracy = ",metrics.accuracy_score(y_test,y_pred))
+KNN accuracy =  0.8009020618556701
+
+print("Confusion matrix",metrics.confusion_matrix(y_test,y_pred))
+
+
+
+model = SVC(C = 1)
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+
+metrics.confusion_matrix(y_true=y_test, y_pred=y_pred)
+
+print("SVM accuracy = ",metrics.accuracy_score(y_test,y_pred))
